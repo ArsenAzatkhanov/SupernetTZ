@@ -22,13 +22,13 @@ public class ShootingEnemy : EnemyBase
             return;
         }
 
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(transform.position - EnemyManager.Instance.PlayerTransform.position), enemyRotationSpeed * Time.deltaTime * 100);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(transform.position - EnemyManager.Instance.PlayerControllerTransform.position), enemyRotationSpeed * Time.deltaTime * 100);
 
         currentInterval += Time.deltaTime;
 
         if (currentInterval > enemyWeapon.shotInterval) 
         {
-            Bullet.Shot(EnemyManager.Instance.PlayerTransform, shotTip, enemyWeapon, BulletType.EnemyBullet);
+            Bullet.Shot(EnemyManager.Instance.PlayerControllerTransform, shotTip, enemyWeapon, BulletType.EnemyBullet);
             currentInterval = 0;
         }
     }

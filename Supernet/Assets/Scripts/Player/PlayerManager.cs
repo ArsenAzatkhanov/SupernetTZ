@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] int maxPlayerHealth;
     [SerializeField] TextMeshProUGUI healthText;
     [SerializeField] TextMeshProUGUI coinsText;
+    [SerializeField] PlayerController playerController;
+    [SerializeField] float invincibilityTime;
+
+    [SerializeField] UnityEvent deathEvent;
+
     int currentHealth;
     public int CurrentHealth => currentHealth;
 
@@ -16,6 +22,10 @@ public class PlayerManager : MonoBehaviour
 
     static PlayerManager _instance;
     public static PlayerManager Instance => _instance;
+
+    float currentInvincibilityTime;
+    bool duringInvincibility => currentInvincibilityTime > 0;
+    
 
     private void Awake()
     {
@@ -32,9 +42,28 @@ public class PlayerManager : MonoBehaviour
         UpdatePlayerUI();
     }
 
+    private void Update()
+    {
+        if (currentInvincibilityTime > 0)
+            currentInvincibilityTime -= Time.deltaTime;
+    }
+
     public void ChangeHealth(int value)
     {
+        if(value < 0)
+        {
+            if (duringInvincibility)
+                return;
+            else
+                currentInvincibilityTime = invincibilityTime;
+        }
+
         currentHealth += value;
+
+        if (currentHealth <= 0)
+            deathEvent.Invoke();
+
+
         UpdatePlayerUI();
     }
 
@@ -44,9 +73,18 @@ public class PlayerManager : MonoBehaviour
         UpdatePlayerUI();
     }
     
+    public void TriggerPushback( GameObject pushbackPoint )
+    {
+        Vector3 direction = (playerController.transform.position - pushbackPoint.transform.position).normalized;
+        direction.y = 0;
+
+        playerController.EnablePushback(direction);
+    }
+
     void UpdatePlayerUI()
     {
         healthText.text = "Health: " + currentHealth.ToString(); 
         coinsText.text = "Coins: " + currentCoins.ToString(); 
     }
+    
 }

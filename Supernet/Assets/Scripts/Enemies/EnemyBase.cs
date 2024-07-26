@@ -6,6 +6,9 @@ using UnityEngine;
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField] int maxHealth;
+    [SerializeField] int contactDamage;
+
+    public int ContactDamage => contactDamage;
 
     int currentHealth;
 
@@ -20,11 +23,11 @@ public class EnemyBase : MonoBehaviour
     {
         currentHealth -= damage;
 
-        if(currentHealth <= 0)
+        if(currentHealth == 0)
         {
-            Destroy(gameObject);
+            FindObjectOfType<ExitHandler>().ChangeEnemiesCount(-1);
             PlayerManager.Instance.ChangeCoins(1);
+            Destroy(gameObject);
         }
-            
     }
 }

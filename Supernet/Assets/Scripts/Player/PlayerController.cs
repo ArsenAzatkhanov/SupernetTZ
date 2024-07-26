@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float rotationSpeed;
     [SerializeField] float maxPushbackSpeed;
     [SerializeField] float pushbackTime;
+    [SerializeField] float gravityScale;
 
     Vector3 pushbackDirection;
     bool duringPushback;
@@ -41,17 +43,16 @@ public class PlayerController : MonoBehaviour
 
         MovePlayer();
         RotatePlayer();
+        PlayerGravity();
     }
 
     void MovePlayer()
     {
-        if (!playerIsMoving) return;
-
         if (!duringPushback)
             characterController.Move(playerDirection * movementSpeed * Time.deltaTime);
         else
         {
-            float pushbackSpeed = Mathf.Lerp(maxPushbackSpeed, 0, currentPushbackTime / pushbackTime);  
+            float pushbackSpeed = Mathf.Lerp(0, maxPushbackSpeed, currentPushbackTime / pushbackTime);
             characterController.Move(pushbackDirection * pushbackSpeed * Time.deltaTime);
             currentPushbackTime -= Time.deltaTime;
 
@@ -66,9 +67,9 @@ public class PlayerController : MonoBehaviour
             playerModel.rotation = Quaternion.RotateTowards(playerModel.rotation, Quaternion.LookRotation(playerDirection), rotationSpeed * Time.deltaTime * 100);
         else
         {
-            if (enemyDetector.NearestEnemy != null)
+            if (enemyDetector.NearestShotEnemy != null)
             {
-                GameObject enemy = enemyDetector.NearestEnemy;
+                GameObject enemy = enemyDetector.NearestShotEnemy;
 
                 Vector3 enemyPos = new Vector3(enemy.transform.position.x, playerModel.position.y , enemy.transform.position.z);
                 playerModel.rotation = Quaternion.RotateTowards(playerModel.rotation, Quaternion.LookRotation(enemyPos - transform.position), rotationSpeed * Time.deltaTime * 100);
@@ -76,13 +77,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void EnablePushback()
+    void PlayerGravity()
     {
+        characterController.Move(Vector3.down * gravityScale * Time.deltaTime);
+    }
+
+    public void EnablePushback(Vector3 direction)
+    {
+        if (duringPushback) return;
+
         duringPushback = true;
         currentPushbackTime = pushbackTime;
+        pushbackDirection = direction;
     }
 
     Vector3 ConvertDirection(Vector2 direction) => new Vector3(direction.x, 0, direction.y);
-
-
 }

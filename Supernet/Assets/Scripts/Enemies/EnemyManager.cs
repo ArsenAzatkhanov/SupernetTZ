@@ -7,9 +7,11 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] float enemyDetectRange;
     public float EnemyDetectRange => enemyDetectRange;
 
-    [SerializeField] Transform playerTransform;
-    public Transform PlayerTransform => playerTransform;
-    
+    [SerializeField] Transform playerControllerTransform;
+    public Transform PlayerControllerTransform => playerControllerTransform;
+
+    [SerializeField] GameObject damageEffect;
+
     static EnemyManager _instance;
     public static EnemyManager Instance => _instance;
 
@@ -24,6 +26,24 @@ public class EnemyManager : MonoBehaviour
             _instance = this;
     }
 
-    public bool PlayerInRange( GameObject enemy ) => Vector3.Distance( enemy.transform.position, playerTransform.position ) < enemyDetectRange;
-    
+    public bool PlayerInRange( GameObject enemy ) => Vector3.Distance( enemy.transform.position, playerControllerTransform.position ) < enemyDetectRange;
+
+    public void DamageEffect(Vector3 position)
+    {
+        StartCoroutine(CreateDamageEffect(position));
+    }
+
+    IEnumerator CreateDamageEffect(Vector3 position)
+    {
+        GameObject effect = Instantiate(damageEffect);
+        effect.transform.position = position;
+
+        ParticleSystem particles = effect.GetComponent<ParticleSystem>();
+
+        particles.Play();
+        
+        yield return new WaitForSeconds(particles.main.duration);
+
+        Destroy(effect);
+    }
 }

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd70f7a7fd0d79c40b75696d105d4286, type: 3}
-  m_Name: ShotgunWeapon
+  m_Name: EnemyWeapon2
   m_EditorClassIdentifier: 
-  weaponName: Shotgun
-  shotInterval: 0.85
-  bulletSpeed: 20
+  weaponName: EnemyWeapon2
+  shotInterval: 1
+  bulletSpeed: 15
   bulletDamage: 1
-  bulletObject: {fileID: 8417395861278554633, guid: f3016950ee3011e4b8029ad65dbcb824,
+  bulletObject: {fileID: 2401491662411709273, guid: 1cfb707c5dd25d64a8bbf30674432e78,
     type: 3}

@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
     [SerializeField] List<WeaponSO> weapons;
+    [SerializeField] GameObject currentWeaponTextObject;
+    [SerializeField] float textFadeSpeed;
 
     PlayerController playerController;
     EnemyDetector enemyDetector;
@@ -13,8 +16,14 @@ public class WeaponController : MonoBehaviour
     float currentMaxInterval, currentInterval;
     int currentWeaponIndex;
 
+    CanvasGroup weaponTextCanvas;
+    TextMeshProUGUI currentWeaponText;
+
     private void Start()
     {
+        weaponTextCanvas = currentWeaponTextObject.GetComponent<CanvasGroup>();
+        currentWeaponText = currentWeaponTextObject.GetComponent<TextMeshProUGUI>();
+
         enemyDetector = GetComponent<EnemyDetector>();
         playerController = GetComponent<PlayerController>();
         currentWeapon = weapons[0];
@@ -23,10 +32,8 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.O))
-        {
-            SwapWeapon();
-        }
+        if (weaponTextCanvas.alpha > 0)
+            weaponTextCanvas.alpha = Mathf.MoveTowards(weaponTextCanvas.alpha, 0, textFadeSpeed * Time.deltaTime);
 
         if (playerController.isMoving)
         {
@@ -34,19 +41,18 @@ public class WeaponController : MonoBehaviour
             return;
         }
 
-        if(enemyDetector.NearestEnemy != null)
+        if(enemyDetector.NearestShotEnemy != null)
         {
             currentInterval += Time.deltaTime;
             if (currentInterval >= currentWeapon.shotInterval)
             {
-                Bullet.Shot(enemyDetector.NearestEnemy.transform, playerController.playerWeaponTip, currentWeapon, BulletType.PlayerBullet);
+                Bullet.Shot(enemyDetector.NearestShotEnemy.transform, playerController.playerWeaponTip, currentWeapon, BulletType.PlayerBullet);
                 currentInterval = 0;
             }
         }
     }
 
-
-    void SwapWeapon()
+    public void SwapWeapon()
     {
         currentWeaponIndex++;
         if (currentWeaponIndex + 1 > weapons.Count)
@@ -54,6 +60,9 @@ public class WeaponController : MonoBehaviour
 
         currentWeapon = weapons[currentWeaponIndex];
         currentInterval = 0;
+
+        currentWeaponText.text = currentWeapon.weaponName;
+        weaponTextCanvas.alpha = 1;
     }
 
 }

@@ -35,10 +35,16 @@ public class Bullet : MonoBehaviour
         if (other.tag == "Enemy" || other.tag == "Walls" || other.tag == "Player")
         {
             if(tag == "Enemy" && bulletType == BulletType.PlayerBullet)
+            {
                 other.GetComponent<EnemyBase>().TakeDamage(bulletDamage);
+                EnemyManager.Instance.DamageEffect(transform.position);
+            }
 
             if (tag == "Player" && bulletType == BulletType.EnemyBullet)
+            {
                 PlayerManager.Instance.ChangeHealth(-bulletDamage);
+                EnemyManager.Instance.DamageEffect(transform.position);
+            }
 
             Destroy(gameObject);
         }
