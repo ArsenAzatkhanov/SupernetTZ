@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelStartDelay : MonoBehaviour
@@ -33,7 +32,6 @@ public class LevelStartDelay : MonoBehaviour
                 yield return null;
             }
             value = 0;
-            print("aboba");
             countdownText.text = (2-i).ToString();
         }
 

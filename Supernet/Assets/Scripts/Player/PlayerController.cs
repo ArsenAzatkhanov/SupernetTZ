@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -35,6 +34,7 @@ public class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         enemyDetector = GetComponent<EnemyDetector>();
+        Application.targetFrameRate = 60;
     }
 
     private void Update()
